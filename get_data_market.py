@@ -26,4 +26,4 @@ stockdata['High'] = [y.high for y in rates]
 stockdata['Low'] = [y.low for y in rates]
 stockdata['Date'] = [y.time for y in rates]
 
-#plt.plot(stockdata['Date'], stockdata['Close'])
+plt.plot(stockdata['Date'], stockdata['Close'])

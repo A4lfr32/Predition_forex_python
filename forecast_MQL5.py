@@ -10,28 +10,20 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 import numpy as np
 from sklearn.metrics import mean_absolute_error
-from MetaTrader5 import *
+import MetaTrader5 as mt5
 
-MT5Initialize()
-MT5WaitForTerminal()
+mt5.initialize()
 
-print(MT5TerminalInfo())
-print(MT5Version())
+print(mt5.terminal_info)
+print(mt5.version)
 
 # Copying data to pandas data frame
-stockdata = pd.DataFrame()
-rates = MT5CopyRatesFromPos("EURUSD", MT5_TIMEFRAME_M5, 0, 200)
+rates = pd.DataFrame(mt5.copy_rates_from_pos("EURUSD", mt5.TIMEFRAME_M1, 0, 200))
 # Deinitializing MT5 connection
-MT5Shutdown()
+mt5.shutdown
 
-stockdata['Open'] = [y.open for y in rates]
-stockdata['Close'] = [y.close for y in rates]
-stockdata['High'] = [y.high for y in rates]
-stockdata['Low'] = [y.low for y in rates]
-stockdata['Date'] = [y.time for y in rates]
-stockdata['Close'] = [y.close for y in rates]
 
-base = stockdata.iloc[:,1].values # pega somente o close
+base = rates.iloc[:,1].values # pega somente o close
 
 #plt.plot(base)
 
@@ -49,15 +41,15 @@ X_teste = X_teste[:periodos]
 X_teste = X_teste.reshape(-1, periodos, 1)
 y_teste = base[-(periodos):]
 y_teste = y_teste.reshape(-1, periodos, 1)
-
-tf.reset_default_graph() # reset pra não ficar nada em memoria
+tf.compat.v1.disable_eager_execution()
+tf.compat.v1.reset_default_graph() # reset pra não ficar nada em memoria
 
 entradas = 1
 neuronios_oculta = 50
 neuronios_saida = 1
 
-xph = tf.placeholder(tf.float32, [None, periodos, entradas])
-yph = tf.placeholder(tf.float32, [None, periodos, neuronios_saida])
+xph = tf.compat.v1.placeholder(tf.float32, [None, periodos, entradas])
+yph = tf.compat.v1.placeholder(tf.float32, [None, periodos, neuronios_saida])
 
 celula = tf.contrib.rnn.BasicRNNCell(num_units = neuronios_oculta, activation = tf.nn.relu)
 # camada saída

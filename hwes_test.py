@@ -14,5 +14,5 @@ data = [x + random() for x in range(1, 100)]
 model = ExponentialSmoothing(data)
 model_fit = model.fit()
 # make prediction
-yhat = model_fit.predict(len(data), len(data))
+yhat = model_fit.predict(len(data), len(data)+100)
 print(yhat)
